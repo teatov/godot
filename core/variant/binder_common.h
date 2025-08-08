@@ -31,6 +31,7 @@
 #pragma once
 
 #include "core/input/input_enums.h"
+#include "core/math/vector_swizzle_enums.inc"
 #include "core/object/object.h"
 #include "core/os/keyboard.h"
 #include "core/templates/simple_type.h"
@@ -94,6 +95,7 @@ VARIANT_ENUM_CAST(Vector3i::Axis);
 VARIANT_ENUM_CAST(Vector4::Axis);
 VARIANT_ENUM_CAST(Vector4i::Axis);
 VARIANT_ENUM_CAST(EulerOrder);
+VARIANT_ENUM_CAST(Swizzle2);
 VARIANT_ENUM_CAST(Projection::Planes);
 
 VARIANT_ENUM_CAST(Error);

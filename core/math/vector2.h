@@ -32,6 +32,7 @@
 
 #include "core/error/error_macros.h"
 #include "core/math/math_funcs.h"
+#include "vector_swizzle_enums.inc"
 
 class String;
 struct Vector2i;
@@ -127,6 +128,8 @@ struct [[nodiscard]] Vector2 {
 	Vector2 slide(const Vector2 &p_normal) const;
 	Vector2 bounce(const Vector2 &p_normal) const;
 	Vector2 reflect(const Vector2 &p_normal) const;
+
+	Vector2 swizzle_2(Swizzle2 swizzle, real_t z, real_t w) const;
 
 	bool is_equal_approx(const Vector2 &p_v) const;
 	bool is_same(const Vector2 &p_v) const;

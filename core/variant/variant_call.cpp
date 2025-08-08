@@ -1999,6 +1999,7 @@ static void _register_variant_builtin_methods_math() {
 	bind_method(Vector2, slide, sarray("n"), varray());
 	bind_method(Vector2, bounce, sarray("n"), varray());
 	bind_method(Vector2, reflect, sarray("line"), varray());
+	bind_method(Vector2, swizzle_2, sarray("swizzle", "z", "w"), varray(0.0, 0.0));
 	bind_method(Vector2, cross, sarray("with"), varray());
 	bind_method(Vector2, abs, sarray(), varray());
 	bind_method(Vector2, sign, sarray(), varray());

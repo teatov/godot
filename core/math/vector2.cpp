@@ -32,6 +32,8 @@
 
 #include "core/math/vector2i.h"
 #include "core/string/ustring.h"
+#include "core/variant/variant.h"
+#include "vector_swizzle_enums.inc"
 
 real_t Vector2::angle() const {
 	return Math::atan2(y, x);
@@ -188,6 +190,59 @@ Vector2 Vector2::reflect(const Vector2 &p_normal) const {
 	ERR_FAIL_COND_V_MSG(!p_normal.is_normalized(), Vector2(), "The normal Vector2 " + p_normal.operator String() + "must be normalized.");
 #endif
 	return 2.0f * p_normal * dot(p_normal) - *this;
+}
+
+const uint16_t SWIZZ_SHIFT_LEN = 4;
+
+const uint16_t SWIZZ_SHIFT_X = 0 * SWIZZ_SHIFT_LEN;
+const uint16_t SWIZZ_SHIFT_Y = 1 * SWIZZ_SHIFT_LEN;
+// const uint16_t SWIZZ_SHIFT_Z = 2 * SWIZZ_SHIFT_LEN;
+// const uint16_t SWIZZ_SHIFT_W = 3 * SWIZZ_SHIFT_LEN;
+
+const uint16_t SWIZZ_FROM_X = 0b0001;
+const uint16_t SWIZZ_FROM_Y = 0b0010;
+const uint16_t SWIZZ_FROM_Z = 0b0100;
+const uint16_t SWIZZ_FROM_W = 0b1000;
+
+const uint16_t SWIZZ_TO_X = 0xF << SWIZZ_SHIFT_X;
+const uint16_t SWIZZ_TO_Y = 0xF << SWIZZ_SHIFT_Y;
+// const uint16_t SWIZZ_TO_Z = 0xF << SWIZZ_SHIFT_Z;
+// const uint16_t SWIZZ_TO_W = 0xF << SWIZZ_SHIFT_W;
+
+Vector2 Vector2::swizzle_2(Swizzle2 p_swizzle, real_t p_z, real_t p_w) const {
+	real_t to_x = Math::NaN;
+	real_t to_y = Math::NaN;
+
+	if (p_swizzle & SWIZZ_TO_X) {
+		uint16_t from = p_swizzle >> SWIZZ_SHIFT_X;
+		if (from & SWIZZ_FROM_X) {
+			to_x = x;
+		} else if (from & SWIZZ_FROM_Y) {
+			to_x = y;
+		} else if (from & SWIZZ_FROM_Z) {
+			to_x = p_z;
+		} else if (from & SWIZZ_FROM_W) {
+			to_x = p_w;
+		}
+	}
+
+	if (p_swizzle & SWIZZ_TO_Y) {
+		uint16_t from = p_swizzle >> SWIZZ_SHIFT_Y;
+		if (from & SWIZZ_FROM_X) {
+			to_y = x;
+		} else if (from & SWIZZ_FROM_Y) {
+			to_y = y;
+		} else if (from & SWIZZ_FROM_Z) {
+			to_y = p_z;
+		} else if (from & SWIZZ_FROM_W) {
+			to_y = p_w;
+		}
+	}
+
+	ERR_FAIL_COND_V_MSG(Math::is_nan(to_x) || Math::is_nan(to_y), Vector2(),
+			vformat("Received invalid swizzle mapping:  %s.", String::num_int64(p_swizzle, 2)));
+
+	return Vector2(to_x, to_y);
 }
 
 bool Vector2::is_equal_approx(const Vector2 &p_v) const {
